@@ -24,7 +24,6 @@ const onMessageHandler = (webview, requests) => async (event) => {
             break;
         }
         case "makeInvoice": {
-            console.log("handle makeInvoice");
             try {
                 const response = await requests.makeInvoice(request.data);
                 injectResponseToWebView(webview.current, id, JSON.stringify(response));
@@ -35,7 +34,6 @@ const onMessageHandler = (webview, requests) => async (event) => {
             break;
         }
         case "sendPayment": {
-            console.log("handler sendPayment");
             try {
                 const response = await requests.sendPayment(request.data);
                 injectResponseToWebView(webview.current, id, JSON.stringify(response));
@@ -46,13 +44,23 @@ const onMessageHandler = (webview, requests) => async (event) => {
             break;
         }
         case "signMessage": {
-            const response = await requests.signMessage(request.data);
-            injectResponseToWebView(webview.current, id, JSON.stringify(response));
+            try {
+                const response = await requests.signMessage(request.data);
+                injectResponseToWebView(webview.current, id, JSON.stringify(response));
+            }
+            catch (e) {
+                injectResponseToWebView(webview.current, id, new Error(e.message));
+            }
             break;
         }
         case "verifyMessage": {
-            const response = await requests.verifyMessage(request.data.signature, request.data.message);
-            injectResponseToWebView(webview.current, id, JSON.stringify(response));
+            try {
+                const response = await requests.verifyMessage(request.data.signature, request.data.message);
+                injectResponseToWebView(webview.current, id, JSON.stringify(response));
+            }
+            catch (e) {
+                injectResponseToWebView(webview.current, id, new Error(e.message));
+            }
             break;
         }
         case "nonwebln_foundInvoice": {
